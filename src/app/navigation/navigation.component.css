@@ -1,0 +1,4 @@
+/* Active state */
+.nav-item.active a {
+  color: blue;
+}

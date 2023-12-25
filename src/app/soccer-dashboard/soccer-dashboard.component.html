@@ -1,0 +1,33 @@
+<div class="container">
+    <app-navigation (leagueEmitter)="updateleagueValue($event)"></app-navigation>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">Games</th>
+                <th scope="col">W</th>
+                <th scope="col">L</th>
+                <th scope="col">D</th>
+                <th scope="col">Goal Difference</th>
+                <th scope="col">Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let league of standings.league; let i = index" (click)="showResults(league)">
+                <th scope="row">{{i+1}}</th>
+                <td><img src="{{league.logo}}" height="25px" width="25px"></td>
+                <td>{{league.name}}</td>
+                <td>{{league.games}}</td>
+                <td>{{league.win}}</td>
+                <td>{{league.lose}}</td>
+                <td>{{league.draw}}</td>
+                <td>{{league.goalDifference}}</td>
+                <td>{{league.points}}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
