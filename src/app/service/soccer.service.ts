@@ -12,7 +12,6 @@ import { CacheService } from './cache.service';
 export class SoccerService {
 
   baseUrl: string = 'https://v3.football.api-sports.io/standings?league=39&season=2019';
-  standings: any;
   private credentials: ICredentials = {
     baseUrl: "https://v3.football.api-sports.io/",
     key: '9789d6cdc66dd3da5149ad42147308f6',
