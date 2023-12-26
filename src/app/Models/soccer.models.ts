@@ -1,5 +1,3 @@
-import { HttpHeaders } from "@angular/common/http";
-
 export enum SoccerLeadID {
     England = 39,
     Spain = 140,
@@ -8,7 +6,7 @@ export enum SoccerLeadID {
     Italy = 135
 }
 
-export interface ICredentials{
+export interface ICredentials {
     baseUrl: string;
     key: string;
 }

@@ -2,8 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ICredentials } from '../Models/soccer.models';
 import { ILeague, IStanding, IStandingResponse } from '../Models/stadings.models';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { IApiFixture, IResults } from '../Models/fixtures.models';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +15,10 @@ export class SoccerService {
   standings: any;
   private credentials: ICredentials = {
     baseUrl: "https://v3.football.api-sports.io/",
-    key: '49de05dcffdbfda823a621473e150c7b',
+    key: '9789d6cdc66dd3da5149ad42147308f6',
   }
   selectedLeague: number = 0;
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private cacheService: CacheService) {
   }
 
   /**
@@ -26,27 +27,33 @@ export class SoccerService {
    * @returns observable of type IStandings
    */
   getStandings(leagueId: number): Observable<IStanding> {
-    return this.http.get(`${this.credentials.baseUrl}standings?league=${leagueId}&season=${new Date().getFullYear()}`, { headers: this.getHeaders() }).pipe(
-      map((x: any) => {
-        const data: IStanding = {
-          league: x.response[0].league.standings[0].map((y: IStandingResponse) => {
-            const league: ILeague = {
-              logo: y.team.logo,
-              name: y.team.name,
-              games: y.all.played,
-              win: y.all.win,
-              lose: y.all.lose,
-              draw: y.all.draw,
-              goalDifference: y.goalsDiff,
-              points: y.points,
-              teamID: y.team.id,
-            }
-            return league;
-          })
-        }
-        return data;
-      })
-    )
+    if (this.cacheService.isCached(leagueId)) {
+      return of(this.cacheService.getCachedData(leagueId));
+    } else {
+      return this.http.get(`${this.credentials.baseUrl}standings?league=${leagueId}&season=${new Date().getFullYear()}`, { headers: this.getHeaders() }).pipe(
+        map((x: any) => {
+          const data: IStanding = {
+            league: x.response[0].league.standings[0].map((y: IStandingResponse) => {
+              const league: ILeague = {
+                logo: y.team.logo,
+                name: y.team.name,
+                games: y.all.played,
+                win: y.all.win,
+                lose: y.all.lose,
+                draw: y.all.draw,
+                goalDifference: y.goalsDiff,
+                points: y.points,
+                teamID: y.team.id,
+              }
+              return league;
+            })
+          }
+          this.cacheService.setCacheData(leagueId, data);
+          return data;
+        })
+      );
+    }
+
   }
 
   /**
@@ -89,5 +96,4 @@ export class SoccerService {
       })
     )
   }
-
 }

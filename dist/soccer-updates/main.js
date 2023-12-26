@@ -168,12 +168,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NavigationComponent: () => (/* binding */ NavigationComponent)
 /* harmony export */ });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 1699);
-/* harmony import */ var _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Models/soccer.models */ 5569);
+/* harmony import */ var _service_utility_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../service/utility.service */ 2117);
 
 
 
 class NavigationComponent {
-  constructor() {
+  constructor(utilityService) {
+    this.utilityService = utilityService;
     this.leagueEmitter = new _angular_core__WEBPACK_IMPORTED_MODULE_1__.EventEmitter();
   }
   /**
@@ -181,37 +182,10 @@ class NavigationComponent {
    * @param event any type, Note: Tried with mouseEvent but not able to achieve so used type any.
    */
   getStandingDetails(event) {
-    this.leagueEmitter.emit(this.getLeagueById(event.target.id));
-  }
-  /**
-   * Function to get league id
-   * @param id string
-   * @returns league id in number format
-   */
-  getLeagueById(id) {
-    let tempID = 0;
-    switch (id) {
-      case 'englandSelect':
-        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.England;
-        break;
-      case 'spainSelect':
-        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.Spain;
-        break;
-      case 'franceSelect':
-        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.France;
-        break;
-      case 'germanySelect':
-        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.Germany;
-        break;
-      case 'italySelect':
-        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.Italy;
-        break;
-    }
-    ;
-    return tempID;
+    this.leagueEmitter.emit(this.utilityService.getLeagueById(event.target.id));
   }
   static #_ = this.ɵfac = function NavigationComponent_Factory(t) {
-    return new (t || NavigationComponent)();
+    return new (t || NavigationComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_service_utility_service__WEBPACK_IMPORTED_MODULE_0__.UtilityService));
   };
   static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
     type: NavigationComponent,
@@ -380,6 +354,69 @@ class ResultsComponent {
 
 /***/ }),
 
+/***/ 841:
+/*!******************************************!*\
+  !*** ./src/app/service/cache.service.ts ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CacheService: () => (/* binding */ CacheService)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 1699);
+
+class CacheService {
+  /**
+   * Function to set the data in local storage based on key and value key i.e league id and value the data.
+   * @param leagueID Number of the league.
+   * @param data data for specified league.
+   */
+  setCacheData(leagueID, data) {
+    let ldata = JSON.parse(localStorage.getItem('standings')) || null;
+    if (!ldata) {
+      ldata = {
+        league: {
+          [leagueID]: data
+        }
+      };
+    } else {
+      ldata.league = Object.assign({
+        [leagueID]: data
+      }, ldata.league);
+    }
+    localStorage.setItem('standings', JSON.stringify(ldata));
+  }
+  /**
+   * Function to retrieve the cached data from the local storage
+   * @param leagueID Number of the league to retrieve
+   * @returns IStanding Data for the league
+   */
+  getCachedData(leagueID) {
+    let data = JSON.parse(localStorage.getItem('standings'));
+    return data.league[leagueID];
+  }
+  /**
+   * Function to check if the league data is present in localstorage or not.
+   * @param leagueID Number of the league.
+   * @returns boolean based on whether the league is present in localstorage or not
+   */
+  isCached(leagueID) {
+    let data = JSON.parse(localStorage.getItem('standings'));
+    return  true ? data?.league?.hasOwnProperty([leagueID]) : 0;
+  }
+  static #_ = this.ɵfac = function CacheService_Factory(t) {
+    return new (t || CacheService)();
+  };
+  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
+    token: CacheService,
+    factory: CacheService.ɵfac,
+    providedIn: 'root'
+  });
+}
+
+/***/ }),
+
 /***/ 7733:
 /*!*******************************************!*\
   !*** ./src/app/service/soccer.service.ts ***!
@@ -390,20 +427,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SoccerService: () => (/* binding */ SoccerService)
 /* harmony export */ });
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ 4860);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rxjs */ 9736);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 1699);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ 4860);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 4980);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 9736);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 1699);
+/* harmony import */ var _cache_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cache.service */ 841);
+
 
 
 
 
 class SoccerService {
-  constructor(http) {
+  constructor(http, cacheService) {
     this.http = http;
+    this.cacheService = cacheService;
     this.baseUrl = 'https://v3.football.api-sports.io/standings?league=39&season=2019';
     this.credentials = {
       baseUrl: "https://v3.football.api-sports.io/",
-      key: '49de05dcffdbfda823a621473e150c7b'
+      key: '9789d6cdc66dd3da5149ad42147308f6'
     };
     this.selectedLeague = 0;
   }
@@ -413,34 +454,39 @@ class SoccerService {
    * @returns observable of type IStandings
    */
   getStandings(leagueId) {
-    return this.http.get(`${this.credentials.baseUrl}standings?league=${leagueId}&season=${new Date().getFullYear()}`, {
-      headers: this.getHeaders()
-    }).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_0__.map)(x => {
-      const data = {
-        league: x.response[0].league.standings[0].map(y => {
-          const league = {
-            logo: y.team.logo,
-            name: y.team.name,
-            games: y.all.played,
-            win: y.all.win,
-            lose: y.all.lose,
-            draw: y.all.draw,
-            goalDifference: y.goalsDiff,
-            points: y.points,
-            teamID: y.team.id
-          };
-          return league;
-        })
-      };
-      return data;
-    }));
+    if (this.cacheService.isCached(leagueId)) {
+      return (0,rxjs__WEBPACK_IMPORTED_MODULE_1__.of)(this.cacheService.getCachedData(leagueId));
+    } else {
+      return this.http.get(`${this.credentials.baseUrl}standings?league=${leagueId}&season=${new Date().getFullYear()}`, {
+        headers: this.getHeaders()
+      }).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_2__.map)(x => {
+        const data = {
+          league: x.response[0].league.standings[0].map(y => {
+            const league = {
+              logo: y.team.logo,
+              name: y.team.name,
+              games: y.all.played,
+              win: y.all.win,
+              lose: y.all.lose,
+              draw: y.all.draw,
+              goalDifference: y.goalsDiff,
+              points: y.points,
+              teamID: y.team.id
+            };
+            return league;
+          })
+        };
+        this.cacheService.setCacheData(leagueId, data);
+        return data;
+      }));
+    }
   }
   /**
    * Function to get the headers
    * @returns object of type httpheaders
    */
   getHeaders() {
-    return new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpHeaders({
+    return new _angular_common_http__WEBPACK_IMPORTED_MODULE_3__.HttpHeaders({
       "x-rapidapi-host": "v3.football.api-sports.io",
       "x-rapidapi-key": this.credentials.key
     });
@@ -455,7 +501,7 @@ class SoccerService {
   getFixtures(teamID, leagueID) {
     return this.http.get(`${this.credentials.baseUrl}fixtures?team=${teamID}&league=${leagueID}&season=${new Date().getFullYear()}`, {
       headers: this.getHeaders()
-    }).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_0__.map)(r => {
+    }).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_2__.map)(r => {
       const result = r.response.map(fixture => {
         const homeObj = {
           home: {
@@ -475,11 +521,66 @@ class SoccerService {
     }));
   }
   static #_ = this.ɵfac = function SoccerService_Factory(t) {
-    return new (t || SoccerService)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpClient));
+    return new (t || SoccerService)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_3__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵinject"](_cache_service__WEBPACK_IMPORTED_MODULE_0__.CacheService));
   };
-  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({
+  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjectable"]({
     token: SoccerService,
     factory: SoccerService.ɵfac,
+    providedIn: 'root'
+  });
+}
+
+/***/ }),
+
+/***/ 2117:
+/*!********************************************!*\
+  !*** ./src/app/service/utility.service.ts ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UtilityService: () => (/* binding */ UtilityService)
+/* harmony export */ });
+/* harmony import */ var _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Models/soccer.models */ 5569);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 1699);
+
+
+class UtilityService {
+  constructor() {}
+  /**
+   * Function to get league id
+   * @param id string
+   * @returns league id in number format
+   */
+  getLeagueById(attributeId) {
+    let tempID = 0;
+    switch (attributeId) {
+      case 'englandSelect':
+        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.England;
+        break;
+      case 'spainSelect':
+        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.Spain;
+        break;
+      case 'franceSelect':
+        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.France;
+        break;
+      case 'germanySelect':
+        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.Germany;
+        break;
+      case 'italySelect':
+        tempID = _Models_soccer_models__WEBPACK_IMPORTED_MODULE_0__.SoccerLeadID.Italy;
+        break;
+    }
+    ;
+    return tempID;
+  }
+  static #_ = this.ɵfac = function UtilityService_Factory(t) {
+    return new (t || UtilityService)();
+  };
+  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
+    token: UtilityService,
+    factory: UtilityService.ɵfac,
     providedIn: 'root'
   });
 }
