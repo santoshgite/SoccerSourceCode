@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ICredentials } from '../Models/soccer.models';
-import { ILeague, IStanding, IStandingResponse } from '../Models/stadings.models';
+import { ILeague, IStanding, IStandingResponse, IStandingResponseObject } from '../Models/stadings.models';
 import { Observable, map, of } from 'rxjs';
-import { IApiFixture, IResults } from '../Models/fixtures.models';
+import { IApiFixture, IFixtureApiResponse, IResults } from '../Models/fixtures.models';
 import { CacheService } from './cache.service';
 
 @Injectable({
@@ -11,12 +11,12 @@ import { CacheService } from './cache.service';
 })
 export class SoccerService {
 
-  baseUrl: string = 'https://v3.football.api-sports.io/standings?league=39&season=2019';
+  baseUrl = 'https://v3.football.api-sports.io/standings?league=39&season=2019';
   private credentials: ICredentials = {
     baseUrl: "https://v3.football.api-sports.io/",
     key: '9789d6cdc66dd3da5149ad42147308f6',
   }
-  selectedLeague: number = 0;
+  selectedLeague = 0;
   constructor(private http: HttpClient, private cacheService: CacheService) {
   }
 
@@ -30,25 +30,25 @@ export class SoccerService {
       return of(this.cacheService.getCachedData(leagueId));
     } else {
       return this.http.get(`${this.credentials.baseUrl}standings?league=${leagueId}&season=${new Date().getFullYear()}`, { headers: this.getHeaders() }).pipe(
-        map((x: any) => {
-          const data: IStanding = {
-            league: x.response[0].league.standings[0].map((y: IStandingResponse) => {
+        map((standingResponse: IStandingResponseObject) => {
+          const stadingModifiedData: IStanding = {
+            league: standingResponse.response ? standingResponse.response[0].league?.standings[0].map((standing: IStandingResponse) => {
               const league: ILeague = {
-                logo: y.team.logo,
-                name: y.team.name,
-                games: y.all.played,
-                win: y.all.win,
-                lose: y.all.lose,
-                draw: y.all.draw,
-                goalDifference: y.goalsDiff,
-                points: y.points,
-                teamID: y.team.id,
+                logo: standing.team.logo,
+                name: standing.team.name,
+                games: standing.all.played,
+                win: standing.all.win,
+                lose: standing.all.lose,
+                draw: standing.all.draw,
+                goalDifference: standing.goalsDiff,
+                points: standing.points,
+                teamID: standing.team.id,
               }
               return league;
-            })
+            }) : []
           }
-          this.cacheService.setCacheData(leagueId, data);
-          return data;
+          this.cacheService.setCacheData(leagueId, stadingModifiedData);
+          return stadingModifiedData;
         })
       );
     }
@@ -75,8 +75,8 @@ export class SoccerService {
    */
   getFixtures(teamID: number, leagueID: number): Observable<IResults[]> {
     return this.http.get(`${this.credentials.baseUrl}fixtures?team=${teamID}&league=${leagueID}&season=${new Date().getFullYear()}`, { headers: this.getHeaders() }).pipe(
-      map((r: any) => {
-        const result: IResults[] = r.response.map((fixture: IApiFixture) => {
+      map((fixtureResponse: IFixtureApiResponse) => {
+        const result: IResults[] = fixtureResponse.response ? fixtureResponse?.response.map((fixture: IApiFixture) => {
           const homeObj = {
             home: {
               logo: fixture.teams.home.logo,
@@ -90,7 +90,7 @@ export class SoccerService {
             }
           };
           return homeObj;
-        });
+        }) : []
         return result
       })
     )

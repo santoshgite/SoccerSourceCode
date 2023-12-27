@@ -20,7 +20,7 @@ export class SoccerDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.soccerService.selectedLeague = this.soccerService.selectedLeague === 0 ? this.soccerService.selectedLeague = SoccerLeadID.England : this.soccerService.selectedLeague;
-    let standingSub = this.soccerService.getStandings(this.soccerService.selectedLeague).subscribe((data: IStanding) => {
+    const standingSub = this.soccerService.getStandings(this.soccerService.selectedLeague).subscribe((data: IStanding) => {
       this.standings = data;
     });
     this.subscriptions.push(standingSub);
@@ -39,7 +39,7 @@ export class SoccerDashboardComponent implements OnInit, OnDestroy {
    * @param id  is league id in number format
    */
   updateleagueValue(id: number) {
-    let standingSub = this.soccerService.getStandings(id).subscribe((data: IStanding) => {
+    const standingSub = this.soccerService.getStandings(id).subscribe((data: IStanding) => {
       this.soccerService.selectedLeague = id;
       this.standings = data;
     });

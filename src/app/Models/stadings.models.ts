@@ -1,5 +1,5 @@
 export interface IStanding {
-    league: ILeague[];
+    league: ILeague[] | undefined;
 }
 
 export interface ILeague {
@@ -15,17 +15,18 @@ export interface ILeague {
 
 }
 
+
 export interface IStandingResponseObject {
-    response: ILeagueResponse[];
+    response?: ILeagueResponse[] | undefined;
 
 }
 
 export interface ILeagueResponse {
-    league: IStandApi;
+    league?: IStandApi;
 }
 
 export interface IStandApi {
-    standings: IStandingResponse[];
+    standings: IStandingResponse[][];
 }
 
 export interface IStandingResponse {

@@ -1,4 +1,4 @@
 /* Active state */
-.nav-item.active a {
-  color: blue;
+.nav-item.active button {
+  color: rgb(230, 3, 3);
 }

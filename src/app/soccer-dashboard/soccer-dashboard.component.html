@@ -18,7 +18,7 @@
         <tbody>
             <tr *ngFor="let league of standings.league; let i = index" (click)="showResults(league)">
                 <th scope="row">{{i+1}}</th>
-                <td><img src="{{league.logo}}" height="25px" width="25px"></td>
+                <td><img src="{{league.logo}}" alt="" height="25px" width="25px"></td>
                 <td>{{league.name}}</td>
                 <td>{{league.games}}</td>
                 <td>{{league.win}}</td>

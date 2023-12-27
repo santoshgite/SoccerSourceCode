@@ -15,8 +15,8 @@ export interface Iparams {
 }
 
 export interface IFixtureApiResponse {
-    response: IApiFixture[]
-};
+    response?: IApiFixture[] |undefined
+}
 
 export interface IApiFixture {
     teams: {

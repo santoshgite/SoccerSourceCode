@@ -6,15 +6,13 @@ import { SoccerLeadID } from '../Models/soccer.models';
 })
 export class UtilityService {
 
-  constructor() { }
-
   /**
    * Function to get league id
    * @param id string
    * @returns league id in number format
    */
-  getLeagueById(attributeId: string): number {
-    let tempID: number = 0;
+  getLeagueById(attributeId: string | null): number {
+    let tempID = 0;
     switch (attributeId) {
       case 'englandSelect':
         tempID = SoccerLeadID.England;
@@ -36,7 +34,7 @@ export class UtilityService {
         tempID = SoccerLeadID.Italy;
         break;
 
-    };
+    }
     return tempID;
   }
 }

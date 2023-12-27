@@ -14,13 +14,13 @@
         </thead>
         <tbody>
             <tr *ngFor="let result of results; let i = index">
-                <td><img src="{{result.home.logo}}" height="25px" width="25px"></td>
+                <td><img src="{{result.home.logo}}" alt="" height="25px" width="25px"></td>
                 <td>{{result.home.name}}</td>
                 <td>{{result.home.goals}}</td>
                 <td>-</td>
                 <td>{{result.away.goals}}</td>
                 <td>{{result.away.name}}</td>
-                <td><img src="{{result.away.logo}}" height="25px" width="25px"></td>
+                <td><img src="{{result.away.logo}}" alt="" height="25px" width="25px"></td>
             </tr>
         </tbody>
     </table>

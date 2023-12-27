@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { SoccerLeadID } from '../Models/soccer.models';
 import { UtilityService } from '../service/utility.service';
+import { SoccerService } from '../service/soccer.service';
 
 @Component({
   selector: 'app-navigation',
@@ -8,16 +8,18 @@ import { UtilityService } from '../service/utility.service';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent {
-  constructor(private utilityService:UtilityService){}
+  constructor(private utilityService: UtilityService, public soccerService: SoccerService) { }
 
   @Output() leagueEmitter = new EventEmitter();
 
+
   /**
    * Function to pass the league id to parent component.
-   * @param event any type, Note: Tried with mouseEvent but not able to achieve so used type any.
+   * @param event Event object
    */
-  getStandingDetails(event: any) {
-    this.leagueEmitter.emit(this.utilityService.getLeagueById(event.target.id));
+  getStandingDetails(event: Event) {
+    const elementId: string = (event.target as Element).id;
+    this.leagueEmitter.emit(this.utilityService.getLeagueById(elementId));
   }
 
 }

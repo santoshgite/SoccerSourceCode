@@ -32,8 +32,8 @@ export class CacheService {
    * @param leagueID Number of the league to retrieve
    * @returns IStanding Data for the league
    */
-  getCachedData(leagueID: number):IStanding {
-    let data = JSON.parse(localStorage.getItem('standings') as string);
+  getCachedData(leagueID: number): IStanding {
+    const data = JSON.parse(localStorage.getItem('standings') as string);
     return data.league[leagueID] as IStanding;
   }
 
@@ -43,7 +43,7 @@ export class CacheService {
    * @returns boolean based on whether the league is present in localstorage or not
    */
   isCached(leagueID: number): boolean {
-    let data = JSON.parse(localStorage.getItem('standings') as string);
-    return true ? data?.league?.hasOwnProperty([leagueID]) : false;
+    const data = JSON.parse(localStorage.getItem('standings') as string);
+    return data !== null ? !!Object.getOwnPropertyDescriptor(data?.league, [leagueID].toString()) : false;
   }
 }
